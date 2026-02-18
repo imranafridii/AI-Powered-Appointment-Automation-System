@@ -1,0 +1,437 @@
+{
+  "name": "n8n Appointment Automation Project",
+  "nodes": [
+    {
+      "parameters": {
+        "resume": "specificTime",
+        "dateTime": "={{ $now.plus({ hours: 24 }) }}"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -352,
+        -208
+      ],
+      "id": "56ffb45f-01dc-4a6a-ae77-26f14f56495f",
+      "name": "Wait",
+      "webhookId": "ef548b30-a48b-4c9e-a859-3ddb606ad424"
+    },
+    {
+      "parameters": {
+        "fromEmail": "imrankhanafridi198@gmail.com",
+        "toEmail": "={{ $('Fetch Pending Appointments').item.json.Email }}",
+        "subject": "=Appointment Reminder for {{ $json.body.name }}",
+        "html": "=<p>Asalam-o-Alaikum <b>{{ $json[\"Patient Name\"] }}</b>,</p>\n<p>Kal aap ki appointment hai. Kya aap confirm karte hain?</p>\n<p>\n  <a href=\"http://localhost:5678/webhook/confirm?name={{ $json[\"Patient Name\"] }}\" style=\"background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;\">YES (Confirm)</a>\n  &nbsp;&nbsp;\n  <a href=\"http://localhost:5678/webhook/cancel?name={{ $json[\"Patient Name\"] }}\" style=\"background-color: #f44336; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;\">NO (Cancel)</a>\n</p>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        -144,
+        -176
+      ],
+      "id": "35e60ac8-5db1-4f7e-bf22-b2f8c3a2dc31",
+      "name": "Send email",
+      "webhookId": "0e354e6d-c23b-4713-a3ba-8f368e8f8d27",
+      "credentials": {
+        "smtp": {
+          "id": "d7Q1uU0Pe4xnrxUv",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -752,
+        -176
+      ],
+      "id": "2a3f0031-7e24-4475-b342-d07cac00330c",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "path": "confirm",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        64,
+        -192
+      ],
+      "id": "d017943e-6c4f-4842-a999-82f343ba71ec",
+      "name": "Receive Patient Confirmation",
+      "webhookId": "f11c8ec2-2967-40f6-9e43-5adcf6c03347"
+    },
+    {
+      "parameters": {
+        "path": "cancel",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        64,
+        -32
+      ],
+      "id": "c78f7c27-c40a-4666-abda-936fb42e39d6",
+      "name": "Receive Patient Cancellation",
+      "webhookId": "4844f3f1-81e1-4368-873b-a0b37aa7daa7"
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "documentId": {
+          "__rl": true,
+          "value": "1wxki-H2QIiBfsZZq9jjNncp8GiQrsTF0G8krKV9DZ9k",
+          "mode": "list",
+          "cachedResultName": "n8n Appointment Automation Project",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wxki-H2QIiBfsZZq9jjNncp8GiQrsTF0G8krKV9DZ9k/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wxki-H2QIiBfsZZq9jjNncp8GiQrsTF0G8krKV9DZ9k/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Status",
+              "lookupValue": "Pending"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -560,
+        -240
+      ],
+      "id": "a97e7d5b-e16e-4d4e-9be5-c3d06a438570",
+      "name": "Fetch Pending Appointments",
+      "credentials": {
+        "googleApi": {
+          "id": "R1kxAOxuAiUS0UFq",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1wxki-H2QIiBfsZZq9jjNncp8GiQrsTF0G8krKV9DZ9k",
+          "mode": "list",
+          "cachedResultName": "n8n Appointment Automation Project",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wxki-H2QIiBfsZZq9jjNncp8GiQrsTF0G8krKV9DZ9k/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wxki-H2QIiBfsZZq9jjNncp8GiQrsTF0G8krKV9DZ9k/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Patient Name": "={{ $json.query.name }}",
+            "Status": "Confirmed"
+          },
+          "matchingColumns": [
+            "Patient Name"
+          ],
+          "schema": [
+            {
+              "id": "Appointment ID",
+              "displayName": "Appointment ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Patient Name",
+              "displayName": "Patient Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Phone Number",
+              "displayName": "Phone Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Appointment Date & Time",
+              "displayName": "Appointment Date & Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        240,
+        -192
+      ],
+      "id": "38bc35bb-05fe-4756-85e0-31550a0220cb",
+      "name": "Update Status to Confirmed",
+      "credentials": {
+        "googleApi": {
+          "id": "R1kxAOxuAiUS0UFq",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1wxki-H2QIiBfsZZq9jjNncp8GiQrsTF0G8krKV9DZ9k",
+          "mode": "list",
+          "cachedResultName": "n8n Appointment Automation Project",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wxki-H2QIiBfsZZq9jjNncp8GiQrsTF0G8krKV9DZ9k/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wxki-H2QIiBfsZZq9jjNncp8GiQrsTF0G8krKV9DZ9k/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Patient Name": "={{ $json.query.name }}",
+            "Status": "Cancelled"
+          },
+          "matchingColumns": [
+            "Patient Name"
+          ],
+          "schema": [
+            {
+              "id": "Appointment ID",
+              "displayName": "Appointment ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Patient Name",
+              "displayName": "Patient Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Phone Number",
+              "displayName": "Phone Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Appointment Date & Time",
+              "displayName": "Appointment Date & Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        240,
+        -16
+      ],
+      "id": "9b917cc1-7a8f-4f76-b921-8e10f4ddc448",
+      "name": "Update Status to Cancelled",
+      "credentials": {
+        "googleApi": {
+          "id": "R1kxAOxuAiUS0UFq",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Send email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Fetch Pending Appointments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Receive Patient Confirmation": {
+      "main": [
+        [
+          {
+            "node": "Update Status to Confirmed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Receive Patient Cancellation": {
+      "main": [
+        [
+          {
+            "node": "Update Status to Cancelled",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Pending Appointments": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "a6008f2d-8676-4396-86e1-82bfa26ce3f1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "67d5090c632189b7d60296e0b6d204f35f7afada02371fdcd86197f58024588e"
+  },
+  "id": "2LhYBT94dcd4UkLg",
+  "tags": []
+}
